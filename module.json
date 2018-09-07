@@ -1,9 +1,8 @@
 {
 	"name": "sequence",
 	"url": "https://bitbucket.org/kronoslang/sequence",
-	"description": "Provides lazy and infinite sequence abstraction",
 	"version": [0, 1, 1],
 	"packages": {
-		"Main": "Sequences and ranges",
+		"Main": "Provides lazy and infinite sequence implementations"
 	}
 }
