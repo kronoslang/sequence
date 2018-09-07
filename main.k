@@ -3,6 +3,7 @@ Import Exception
 
 Package Sequence {
 	Type Infinite-Length
+	Type Sequence-End
 	Type Lazy
 
 	Cons(len state accessor iterator) {
@@ -93,7 +94,7 @@ Package Sequence {
 			Length(seq)
 			(fn seed seq) 
 			(_ s _) => s
-			(f sd sq) => (f f(sd :First(sq)) :Rest(sq)))
+			(f sd sq) => (Pair?(sq) : (f f(sd :First(sq)) :Rest(sq)) Sequence-End)
 	}
 
 	Zip(lists) {
@@ -104,7 +105,24 @@ Package Sequence {
 			len 
 			(len lists)
 			(l ls) => smap(:First ls)
-			(l ls) => When(l > #0 (l - #1 smap(:Rest ls))))
+			(l ls) => 
+				(l > #0 : (l - #1 smap(:Rest ls)) 
+						  Sequence-End)
+	}
+
+
+	Partition(n list) {
+		ll = Length(list)
+		len = Equal-Type(ll Infinite-Length) : Infinite-Length 
+			  Ceil(Length(list) / n)
+		Cons(
+			len
+			(len list)
+			(l ls) => (l > #1 : Algorithm:Take(n ls) ls)
+			(l ls) => 
+				(l > #1 : (l - #1 Algorithm:Skip(n ls)) 
+						  Sequence-End)
+		)
 	}
 }
 
@@ -164,10 +182,20 @@ Sub(a b) {
 		Equal-Type(a Sequence:Infinite-Length) a)
 }
 
+Div(a b) {
+	When(
+		Equal-Type(a Sequence:Infinite-Length) a)
+}
+
 Min(a b) {
 	When(
 		Equal-Type(a Sequence:Infinite-Length) b
 		Equal-Type(b Sequence:Infinite-Length) a)
+}
+
+Greater(a b) {
+	When(Equal-Type(a Sequence:Infinite-Length)
+		 Not(Equal-Type(b Sequence:Infinite-Length)))
 }
 
 Package Fallback {
